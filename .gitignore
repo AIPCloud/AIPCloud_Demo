@@ -2,9 +2,9 @@
 *.env
 *.sqlite
 *.db
-data/*
+**/data/*
 # exception to the rule
-!somefolder/.gitkeep 
+!**/data/.gitkeep 
 
 # misc
 .DS_Store
