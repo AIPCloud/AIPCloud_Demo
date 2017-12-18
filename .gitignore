@@ -1,0 +1,16 @@
+*.pyc
+*.env
+*.sqlite
+*.db
+data/*
+# exception to the rule
+!somefolder/.gitkeep 
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+aipcloud/
