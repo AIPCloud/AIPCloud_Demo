@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package speech_to_text;
+
+// Speech To Text service definition.
+service SpeechToText {
+  rpc Recognition (Request) returns (Response) {}
+}
+
+message Request {
+  repeated float signal = 1 [packed=true];
+  int32 sample_rate = 2;
+  string language_code = 3;
+}
+
+message Response {
+  repeated string transcript = 1;
+  float exec_time = 2;
+}
