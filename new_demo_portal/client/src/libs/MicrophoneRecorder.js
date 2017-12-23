@@ -1,4 +1,6 @@
 import AudioContext from './AudioContext';
+import toBuffer from 'blob-to-buffer';
+import createBuffer from 'audio-buffer-from';
 
 let analyser;
 let audioCtx;
@@ -48,6 +50,7 @@ export class MicrophoneRecorder {
         if(onStartCallback) { onStartCallback() };
       }
     } else {
+      console.log("Has not media recorder.");
       if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
 
@@ -64,17 +67,24 @@ export class MicrophoneRecorder {
 
           mediaRecorder.onstop = this.onStop;
           mediaRecorder.ondataavailable = (event) => {
+            // Convert to AudioBuffer
+            toBuffer(event.data, (err, buffer) => {
+              if (err) throw err;
+              let b = createBuffer(buffer, {context: audioCtx})
+              // Stream to socket.io server
+
+            })
             chunks.push(event.data);
           }
 
           audioCtx = AudioContext.getAudioContext();
           analyser = AudioContext.getAnalyser();
+          console.log(analyser);
 
-          mediaRecorder.start(10);
+          mediaRecorder.start(1000);
 
           const source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
-
         });
       } else {
         alert('Your browser does not support audio recording');
