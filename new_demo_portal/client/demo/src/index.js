@@ -46,6 +46,7 @@ export default class Demo extends Component {
   }
 
   onStop= (blobObject) => {
+    console.log(blobObject);
     this.setState({
       blobURL : blobObject.blobURL
     });
@@ -57,8 +58,7 @@ export default class Demo extends Component {
     return(
       <MuiThemeProvider>
         <div>
-          <h1>React-Mic</h1>
-          <p><a href="https://github.com/hackingbeauty/react-mic">Documentation</a></p>
+          <h1>Demo Invest</h1>
           <ReactMic
             className="oscilloscope"
             record={this.state.record}
@@ -87,15 +87,6 @@ export default class Demo extends Component {
             onClick={this.stopRecording}>
             <MicrophoneOff />
           </FloatingActionButton>
-          <br />
-          <br />
-          <br />
-          <p>As featured in the course <br /><a href="http://singlepageapplication.com">How to Write a Single Page Application</a></p>
-          <br />
-          <br />
-          <p>Check out how I use it in my app
-          <br />
-            <a href="http://voicerecordpro.com" target="_blank">Voice Record Pro</a> (record your voice and publish it)</p>
         </div>
     </MuiThemeProvider>
     );
