@@ -8,6 +8,8 @@ import MicrophoneOff               from 'material-ui/svg-icons/av/stop';
 
 import { ReactMic, saveRecording } from '../../src';
 import sampleAudio                 from './sample_audio.webm';
+import { Request } from './protos/new_demo_portal_pb'
+
 
 require ('./styles.scss');
 
