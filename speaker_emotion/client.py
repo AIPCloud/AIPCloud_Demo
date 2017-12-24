@@ -30,7 +30,7 @@ def run():
     it = stub.Analyze(gen(signal, sampleRate))
     try:
         for r in it:
-            print(f"Neutralite = {r.neutral}")
+            print(f"Neutralite = {r.emotion.neutral}")
     except grpc._channel._Rendezvous as err:
         print(err)
 

@@ -2,9 +2,11 @@
 *.env
 *.sqlite
 *.db
+*pb2*
 **/data/*
 # exception to the rule
-!**/data/.gitkeep 
+!**/data/.gitkeep
+
 
 # misc
 .DS_Store
@@ -14,3 +16,4 @@
 .env.production.local
 
 aipcloud/
+node_modules/

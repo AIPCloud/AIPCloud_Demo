@@ -1,22 +1,22 @@
 syntax = "proto3";
 
+import "speaker_emotion.proto";
+import "speech_to_text.proto";
+
 package new_demo_portal;
 
 // Prime factors service definition.
 service NewDemoPortal {
-  // We have a method called `PrimeFactors` which takes
-  // parameter called `Request` and returns the message `Response`
-
-  // The stream keyword is specified before both the request type and response
-  // type to make it as bidirectional streaming RPC method.
-
-  rpc Analyze (Request) returns (Response) {}
+  rpc Analyze (stream Request) returns (stream Response) {}
 }
 
 message Request {
-  string sentence = 1;
+  repeated float signal = 1 [packed=true];
+  int32 sample_rate = 2;
 }
 
 message Response {
-  float exec_time = 1;
+  speech_to_text.Speech speech = 1;
+  speaker_emotion.Emotion emotion = 2;
+  float exec_time = 3;
 }

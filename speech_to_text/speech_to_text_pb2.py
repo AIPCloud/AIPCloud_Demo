@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='speech_to_text.proto',
   package='speech_to_text',
   syntax='proto3',
-  serialized_pb=_b('\n\x14speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"1\n\x08Response\x12\x12\n\ntranscript\x18\x01 \x03(\t\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32R\n\x0cSpeechToText\x12\x42\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x14speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"\x1c\n\x06Speech\x12\x12\n\ntranscript\x18\x01 \x01(\t\"E\n\x08Response\x12&\n\x06speech\x18\x01 \x01(\x0b\x32\x16.speech_to_text.Speech\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32R\n\x0cSpeechToText\x12\x42\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00\x62\x06proto3')
 )
 
 
@@ -70,6 +70,37 @@ _REQUEST = _descriptor.Descriptor(
 )
 
 
+_SPEECH = _descriptor.Descriptor(
+  name='Speech',
+  full_name='speech_to_text.Speech',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='transcript', full_name='speech_to_text.Speech.transcript', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=115,
+  serialized_end=143,
+)
+
+
 _RESPONSE = _descriptor.Descriptor(
   name='Response',
   full_name='speech_to_text.Response',
@@ -78,9 +109,9 @@ _RESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='transcript', full_name='speech_to_text.Response.transcript', index=0,
-      number=1, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
+      name='speech', full_name='speech_to_text.Response.speech', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -103,11 +134,13 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=115,
-  serialized_end=164,
+  serialized_start=145,
+  serialized_end=214,
 )
 
+_RESPONSE.fields_by_name['speech'].message_type = _SPEECH
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
+DESCRIPTOR.message_types_by_name['Speech'] = _SPEECH
 DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -117,6 +150,13 @@ Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,
   # @@protoc_insertion_point(class_scope:speech_to_text.Request)
   ))
 _sym_db.RegisterMessage(Request)
+
+Speech = _reflection.GeneratedProtocolMessageType('Speech', (_message.Message,), dict(
+  DESCRIPTOR = _SPEECH,
+  __module__ = 'speech_to_text_pb2'
+  # @@protoc_insertion_point(class_scope:speech_to_text.Speech)
+  ))
+_sym_db.RegisterMessage(Speech)
 
 Response = _reflection.GeneratedProtocolMessageType('Response', (_message.Message,), dict(
   DESCRIPTOR = _RESPONSE,
@@ -135,8 +175,8 @@ _SPEECHTOTEXT = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=166,
-  serialized_end=248,
+  serialized_start=216,
+  serialized_end=298,
   methods=[
   _descriptor.MethodDescriptor(
     name='Recognition',
