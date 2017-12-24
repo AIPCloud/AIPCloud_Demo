@@ -25,7 +25,7 @@ def signal_generator():
     while True:
         sio.sleep(0.5)
         if len(audioChunks) > 0:
-            print("Doing some shit.")
+            print("Yielding first chunk in line.")
             chunk = audioChunks[0]
             yield new_demo_portal_pb2.Request(
                 signal=chunk["signal"],
@@ -36,7 +36,10 @@ def emit_data_thread(iterator):
     while True:
         sio.sleep(0.5)
         try:
-            next(iterator)
+            print("Testing if new data arrived.")
+            print(iterator._next())
+            # sio.emit('my response', {'data': message['data']}, room=sid,
+            #          namespace='/test')
         except StopIteration:
             pass
 
@@ -46,8 +49,7 @@ def grpc_client_thread():
         'localhost:{}'.format(_NEW_DEMO_PORTAL_PORT))
     stub = new_demo_portal_pb2_grpc.NewDemoPortalStub(channel)
     print("Connection with server established.")
-    gen = signal_generator()
-    return stub.Analyze(gen)
+    return stub.Analyze(signal_generator())
 
 
 @app.route('/')
@@ -138,7 +140,9 @@ if __name__ == '__main__':
         import eventlet.wsgi
         from eventlet import tpool
         response_iterator = grpc_client_thread()
-        tpool.execute(emit_data_thread, response_iterator)
+        # tpool.execute(emit_data_thread, response_iterator)
+        sio.start_background_task(emit_data_thread, response_iterator)
+
         print("Backgroud thread started.")
         eventlet.wsgi.server(eventlet.listen(('', 5001)), app)
     elif sio.async_mode == 'gevent':
