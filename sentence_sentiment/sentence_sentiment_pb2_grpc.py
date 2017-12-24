@@ -6,8 +6,6 @@ import sentence_sentiment_pb2 as sentence__sentiment__pb2
 
 class SentenceSentimentStub(object):
   """Prime factors service definition.
-  We have a method called `PrimeFactors` which takes
-  parameter called `Request` and returns the message `Response`
   """
 
   def __init__(self, channel):
@@ -25,15 +23,11 @@ class SentenceSentimentStub(object):
 
 class SentenceSentimentServicer(object):
   """Prime factors service definition.
-  We have a method called `PrimeFactors` which takes
-  parameter called `Request` and returns the message `Response`
   """
 
   def Analyze(self, request, context):
-    """The stream keyword is specified before both the request type and response
-    type to make it as bidirectional streaming RPC method.
-
-    """
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')

@@ -4,12 +4,6 @@ package sentence_sentiment;
 
 // Prime factors service definition.
 service SentenceSentiment {
-  // We have a method called `PrimeFactors` which takes
-  // parameter called `Request` and returns the message `Response`
-
-  // The stream keyword is specified before both the request type and response
-  // type to make it as bidirectional streaming RPC method.
-
   rpc Analyze (Request) returns (Response) {}
 }
 
@@ -17,9 +11,13 @@ message Request {
   string sentence = 1;
 }
 
-message Response {
+message Sentiment {
   float positivity = 1;
   float neutrality = 2;
   float negativity = 3;
-  float exec_time = 4;
+}
+
+message Response {
+  Sentiment sentiment = 1;
+  float exec_time = 2;
 }

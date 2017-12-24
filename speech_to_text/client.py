@@ -16,7 +16,7 @@ def run():
 
     res = stub.Recognition(speech_to_text_pb2.Request(signal=signal, sample_rate=sampleRate, language_code='en-US'))
 
-    print(f"Transcipt: {res.transcript}")
+    print(f"Transcipt: {res.speech.transcript}")
     print(f"in {res.exec_time}s")
 
 

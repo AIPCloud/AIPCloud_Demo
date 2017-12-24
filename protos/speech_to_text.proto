@@ -13,7 +13,11 @@ message Request {
   string language_code = 3;
 }
 
+message Speech {
+  string transcript = 1;
+}
+
 message Response {
-  repeated string transcript = 1;
+  Speech speech = 1;
   float exec_time = 2;
 }
