@@ -37,10 +37,14 @@ def emit_data_thread(iterator):
         sio.sleep(0.5)
         try:
             print("Testing if new data arrived.")
-            print(iterator._next())
+            # print(iterator._next())
+            # res = next(iterator)
+            #print(f"transcript: {res.speech.transcript}")
+            print("Tested")
             # sio.emit('my response', {'data': message['data']}, room=sid,
             #          namespace='/test')
         except StopIteration:
+            print("No more data available.")
             pass
 
 def grpc_client_thread():
@@ -48,8 +52,11 @@ def grpc_client_thread():
     channel = grpc.insecure_channel(
         'localhost:{}'.format(_NEW_DEMO_PORTAL_PORT))
     stub = new_demo_portal_pb2_grpc.NewDemoPortalStub(channel)
+    response_iterator = stub.Analyze(signal_generator())
+    #response_iterator.add_done_callback(emit_data_thread)
     print("Connection with server established.")
-    return stub.Analyze(signal_generator())
+    return response_iterator
+
 
 
 @app.route('/')
@@ -138,12 +145,12 @@ if __name__ == '__main__':
         # deploy with eventlet
         import eventlet
         import eventlet.wsgi
-        from eventlet import tpool
+        from eventlet import greenthread
         response_iterator = grpc_client_thread()
-        # tpool.execute(emit_data_thread, response_iterator)
-        sio.start_background_task(emit_data_thread, response_iterator)
-
-        print("Backgroud thread started.")
+        print("Starting background thread.")
+        greenthread.spawn(emit_data_thread, response_iterator)
+        # sio.start_background_task(emit_data_thread, response_iterator)
+        # print("Backgroud thread started.")
         eventlet.wsgi.server(eventlet.listen(('', 5001)), app)
     elif sio.async_mode == 'gevent':
         print("Gevent")
