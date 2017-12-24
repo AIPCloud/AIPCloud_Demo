@@ -44,10 +44,10 @@
   "license": "MIT",
   "repository": "https://github.com/hackingbeauty/react-mic",
   "dependencies": {
-    "blob-to-buffer": "^1.2.6",
     "audio-buffer-from": "^1.0.3",
+    "blob-to-buffer": "^1.2.6",
     "prop-types": "^15.5.10",
     "react-ga": "^2.2.0",
-    "socket.io": "^2.0.4"
+    "socket.io-client": "^2.0.4"
   }
 }

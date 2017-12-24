@@ -2,6 +2,8 @@ import AudioContext from './AudioContext';
 import toBuffer from 'blob-to-buffer';
 import createBuffer from 'audio-buffer-from';
 
+import io from 'socket.io-client';
+
 let analyser;
 let audioCtx;
 let mediaRecorder;
@@ -64,13 +66,18 @@ export class MicrophoneRecorder {
           }
 
           if(onStartCallback) { onStartCallback() };
-
+          const socket = io("http://192.168.0.10:5001/new_demo_portal")
           mediaRecorder.onstop = this.onStop;
           mediaRecorder.ondataavailable = (event) => {
             // Convert to AudioBuffer
             toBuffer(event.data, (err, buffer) => {
               if (err) throw err;
               let b = createBuffer(buffer, {context: audioCtx})
+              socket.emit("audio_buffer", {
+                sample_rate: b.sampleRate,
+                signal: b.getChannelData(0)
+              })
+
               // Stream to socket.io server
 
             })
