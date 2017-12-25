@@ -11,6 +11,8 @@ import grpc
 import new_demo_portal_pb2
 import new_demo_portal_pb2_grpc
 
+from patch import patch_iterator
+
 sio = socketio.Server(logger=True, async_mode=async_mode)
 app = Flask(__name__)
 app.wsgi_app = socketio.Middleware(sio, app.wsgi_app)
@@ -33,19 +35,29 @@ def signal_generator():
             audioChunks.pop(0)
 
 def emit_data_thread(iterator):
-    while True:
-        sio.sleep(0.5)
+    print("Starting to analyze responses.")
+    # next(iterator)
+    for fut in response_iterator:
         try:
-            print("Testing if new data arrived.")
-            # print(iterator._next())
-            # res = next(iterator)
-            #print(f"transcript: {res.speech.transcript}")
-            print("Tested")
-            # sio.emit('my response', {'data': message['data']}, room=sid,
-            #          namespace='/test')
+            print("Data received from server.")
+            thing = yield fut
         except StopIteration:
-            print("No more data available.")
-            pass
+            break
+
+
+    # while True:
+    #     sio.sleep(0.5)
+    #     try:
+    #         print("Testing if new data arrived.")
+    #         # print(iterator._next())
+    #         # res = next(iterator)
+    #         #print(f"transcript: {res.speech.transcript}")
+    #         print("Tested")
+    #         # sio.emit('my response', {'data': message['data']}, room=sid,
+    #         #          namespace='/test')
+    #     except StopIteration:
+    #         print("No more data available.")
+    #         pass
 
 def grpc_client_thread():
     ########## gRPC ###########
@@ -55,8 +67,8 @@ def grpc_client_thread():
     response_iterator = stub.Analyze(signal_generator())
     #response_iterator.add_done_callback(emit_data_thread)
     print("Connection with server established.")
+    patch_iterator(response_iterator)
     return response_iterator
-
 
 
 @app.route('/')
@@ -148,8 +160,8 @@ if __name__ == '__main__':
         from eventlet import greenthread
         response_iterator = grpc_client_thread()
         print("Starting background thread.")
-        greenthread.spawn(emit_data_thread, response_iterator)
-        # sio.start_background_task(emit_data_thread, response_iterator)
+        # greenthread.spawn(grpc_client_thread)
+        sio.start_background_task(emit_data_thread, response_iterator)
         # print("Backgroud thread started.")
         eventlet.wsgi.server(eventlet.listen(('', 5001)), app)
     elif sio.async_mode == 'gevent':
