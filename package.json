@@ -1,0 +1,39 @@
+{
+  "name": "aipcloud_demo",
+  "version": "1.0.0",
+  "description": "AIPCloud_Demo fund raise purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaxa27/AIPCloud_Demo.git"
+  },
+  "keywords": [
+    "demo",
+    "ai",
+    "cloud",
+    "computing",
+    "neural",
+    "networks"
+  ],
+  "author": "Taqiyeddine Sakmeche",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alaxa27/AIPCloud_Demo/issues"
+  },
+  "homepage": "https://github.com/alaxa27/AIPCloud_Demo#readme",
+  "dependencies": {
+    "async": "^2.6.0",
+    "audio-loader": "^1.0.3",
+    "builder": "^3.2.3",
+    "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "google-protobuf": "^3.5.0",
+    "grpc": "^1.8.0",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
+    "socket.io": "^2.0.4"
+  }
+}
