@@ -1,11 +1,11 @@
 import grpc
 
-import speaker_emotion_pb2
-import speaker_emotion_pb2_grpc
+import speaker_change_detection_pb2
+import speaker_change_detection_pb2_grpc
 
 import soundfile as sf
 
-_SPEAKER_EMOTION_PORT = 50052
+_SPEAKER_CHANGE_DETECTION_PORT = 50054
 
 
 def gen(array, chunkSize):
@@ -18,18 +18,18 @@ def gen(array, chunkSize):
                 chunk.append(array[j])
 
         i += chunkSize
-        yield speaker_emotion_pb2.Request(signal=chunk, sample_rate=chunkSize)
+        yield speaker_change_detection_pb2.Request(signal=chunk, sample_rate=chunkSize)
 
 def run():
-    channel = grpc.insecure_channel('localhost:{}'.format(_SPEAKER_EMOTION_PORT))
-    stub = speaker_emotion_pb2_grpc.SpeakerEmotionStub(channel)
+    channel = grpc.insecure_channel('localhost:{}'.format(_SPEAKER_CHANGE_DETECTION_PORT))
+    stub = speaker_change_detection_pb2_grpc.SpeakerChangeDetectionStub(channel)
 
     # Reading file (test purposes)
     (signal, sampleRate) = sf.read("./sample_1.wav")
     it = stub.Analyze(gen(signal, sampleRate))
     try:
         for r in it:
-            print(f"Neutralite = {r.emotion.neutral}")
+            print(f"Change Time = {r.change.time}")
     except grpc._channel._Rendezvous as err:
         print(err)
 

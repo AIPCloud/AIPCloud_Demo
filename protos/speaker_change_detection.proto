@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package speaker_change_detection;
+
+// Speaker Change Detection service definition.
+service SpeakerChangeDetection {
+  rpc Analyze (stream Request) returns (stream Response) {}
+}
+
+message Request {
+  repeated float signal = 1 [packed=true];
+  int32 sample_rate = 2;
+}
+
+message Change {
+  float time = 1;
+}
+
+message Response {
+  Change change= 1;
+  float exec_time = 2;
+}
