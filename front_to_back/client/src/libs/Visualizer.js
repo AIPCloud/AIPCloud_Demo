@@ -26,7 +26,6 @@ const Visualizer = {
 
       const sliceWidth = width * 1.0 / bufferLength;
       let x = 0;
-
       for(let i = 0; i < bufferLength; i++) {
         const v = dataArray[i] / 128.0;
         const y = v * height/2;

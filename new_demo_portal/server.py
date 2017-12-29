@@ -3,6 +3,8 @@ import grpc
 import time
 import os
 
+import soundfile as sf
+
 import new_demo_portal_pb2
 import new_demo_portal_pb2_grpc
 
@@ -15,24 +17,31 @@ _PORT = 50050
 
 class NewDemoPortal(new_demo_portal_pb2_grpc.NewDemoPortalServicer):
     def Analyze(self, request_iterator, context):
+        Signal = []
         execTime = time.time()
         print("Connection with client established.")
         for req in request_iterator:
-            print("Successful request.")
+            # print("Successful request.")
+            Signal += req.signal
+            if len(Signal) > 15 * req.sample_rate:
+                print("Writing audio file.")
+                sf.write("new_file.wav", Signal, req.sample_rate)
+
+                yield new_demo_portal_pb2.Response(
+                    speech=speech_to_text_pb2.Speech(
+                        transcript="test"),
+                    emotion=speaker_emotion_pb2.Emotion(
+                        neutral=0.1,
+                        calm=0.2,
+                        happy=0.3,
+                        sad=0.4,
+                        angry=0.5,
+                        fearful=0.6,
+                        surprise=0.7,
+                        disgust=0.8),
+                    exec_time=execTime)
+                raise StopIteration
             execTime = time.time() - execTime
-            yield new_demo_portal_pb2.Response(
-                speech=speech_to_text_pb2.Speech(
-                    transcript="test"),
-                emotion=speaker_emotion_pb2.Emotion(
-                    neutral=0.1,
-                    calm=0.2,
-                    happy=0.3,
-                    sad=0.4,
-                    angry=0.5,
-                    fearful=0.6,
-                    surprise=0.7,
-                    disgust=0.8),
-                exec_time=execTime)
 
 
 def serve():

@@ -21,18 +21,20 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-nsp.on('connection', function(socket){
+nsp.on('connect', function(socket){
   var call = client.analyze();
+  console.log("Client connected.");
   call.on('data', function(res) {
-    console.log("Response arrived: ", res);
+    // console.log("Response arrived: ", res);
     socket.emit('analysis_response', res)
   })
   socket.on('audio_buffer', function(data){
-    console.log('Socket received.');
+    // console.log('Socket received.');
     data.signal = Object.values(data.signal)
     call.write(data)
   })
   socket.on('disconnect', function() {
+    console.log("Client disconnected.");
     call.end();
   })
 });

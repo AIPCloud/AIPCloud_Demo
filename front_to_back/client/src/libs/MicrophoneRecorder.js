@@ -1,8 +1,16 @@
-import AudioContext from './AudioContext';
 import toBuffer from 'blob-to-buffer';
-import createBuffer from 'audio-buffer-from';
-
+import AudioContext from './AudioContext';
 import io from 'socket.io-client';
+
+//////////////SOCKET///////////////
+const socket = io("http://192.168.0.10:5001/new_demo_portal")
+socket.on('analysis_response', (data) => {
+    console.log(data);
+})
+socket.emit('start_demo')
+//////////////SOCKET///////////////
+
+
 
 let analyser;
 let audioCtx;
@@ -15,83 +23,85 @@ let blobObject;
 let onStartCallback;
 let onStopCallback;
 
-const constraints = { audio: true, video: false }; // constraints - only audio needed
+const constraints = {
+  audio: true,
+  video: false
+}; // constraints - only audio needed
 
-navigator.getUserMedia = (navigator.getUserMedia ||
-                          navigator.webkitGetUserMedia ||
-                          navigator.mozGetUserMedia ||
-                          navigator.msGetUserMedia);
+navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
 export class MicrophoneRecorder {
   constructor(onStart, onStop, options) {
-    onStartCallback= onStart;
-    onStopCallback= onStop;
-    mediaOptions= options;
+    onStartCallback = onStart;
+    onStopCallback = onStop;
+    mediaOptions = options;
   }
 
-  startRecording=() => {
+  startRecording = () => {
 
     startTime = Date.now();
 
-    if(mediaRecorder) {
+    if (mediaRecorder) {
 
-      if(audioCtx && audioCtx.state === 'suspended') {
+      if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
 
-      if(mediaRecorder && mediaRecorder.state === 'paused') {
+      if (mediaRecorder && mediaRecorder.state === 'paused') {
         mediaRecorder.resume();
         return;
       }
 
-      if(audioCtx && mediaRecorder && mediaRecorder.state === 'inactive') {
+      if (audioCtx && mediaRecorder && mediaRecorder.state === 'inactive') {
         mediaRecorder.start(10);
         const source = audioCtx.createMediaStreamSource(stream);
         source.connect(analyser);
-        console.log("Has media recorder.");
-        if(onStartCallback) { onStartCallback() };
+        if (onStartCallback) {
+          onStartCallback()
+        };
       }
     } else {
-      console.log("Has not media recorder.");
       if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
 
         navigator.mediaDevices.getUserMedia(constraints).then((str) => {
           stream = str;
 
-          if(MediaRecorder.isTypeSupported(mediaOptions.mimeType)) {
+          if (MediaRecorder.isTypeSupported(mediaOptions.mimeType)) {
             mediaRecorder = new MediaRecorder(str, mediaOptions);
           } else {
             mediaRecorder = new MediaRecorder(str);
           }
 
-          if(onStartCallback) { onStartCallback() };
-          const socket = io("http://192.168.0.10:5001/new_demo_portal")
+          if (onStartCallback) {
+            onStartCallback()
+          };
+
           mediaRecorder.onstop = this.onStop;
           mediaRecorder.ondataavailable = (event) => {
-            // Convert to AudioBuffer
-            toBuffer(event.data, (err, buffer) => {
-              if (err) throw err;
-              let b = createBuffer(buffer, {context: audioCtx})
-              socket.emit("audio_buffer", {
-                sample_rate: b.sampleRate,
-                signal: b.getChannelData(0)
-              })
-
-              // Stream to socket.io server
-
-            })
             chunks.push(event.data);
           }
 
           audioCtx = AudioContext.getAudioContext();
           analyser = AudioContext.getAnalyser();
-          console.log(analyser);
 
-          mediaRecorder.start(1000);
+          mediaRecorder.start(10);
 
           const source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
+          var processor = audioCtx.createScriptProcessor(1024, 1, 1);
+          source.connect(processor);
+          processor.connect(audioCtx.destination);
+
+          // var nsp = socks.of('/new_demo_portal');
+
+          processor.onaudioprocess = (e) => {
+            let b = e.inputBuffer
+            socket.emit("audio_buffer", {
+              sample_rate: b.sampleRate,
+              signal: b.getChannelData(0)
+            })
+          }
         });
       } else {
         alert('Your browser does not support audio recording');
@@ -101,25 +111,31 @@ export class MicrophoneRecorder {
   }
 
   stopRecording() {
-    if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+
+
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
       audioCtx.suspend();
     }
   }
 
   onStop(evt) {
-    const blob = new Blob(chunks, { 'type' : mediaOptions.mimeType });
+    socket.emit('stop_demo')
+
+    const blob = new Blob(chunks, {'type': mediaOptions.mimeType});
     chunks = [];
 
-    const blobObject =  {
-      blob      : blob,
-      startTime : startTime,
-      stopTime  : Date.now(),
-      options   : mediaOptions,
-      blobURL   : window.URL.createObjectURL(blob)
+    const blobObject = {
+      blob: blob,
+      startTime: startTime,
+      stopTime: Date.now(),
+      options: mediaOptions,
+      blobURL: window.URL.createObjectURL(blob)
     }
 
-    if(onStopCallback) { onStopCallback(blobObject) };
+    if (onStopCallback) {
+      onStopCallback(blobObject)
+    };
 
   }
 
