@@ -18,7 +18,7 @@ def gen(array, chunkSize):
                 chunk.append(array[j])
 
         i += chunkSize
-        yield speaker_emotion_pb2.Request(signal=chunk, sample_rate=chunkSize)
+        yield speaker_emotion_pb2.Request(signal=chunk, sample_rate=44100)
 
 def run():
     channel = grpc.insecure_channel('localhost:{}'.format(_SPEAKER_EMOTION_PORT))
@@ -26,7 +26,7 @@ def run():
 
     # Reading file (test purposes)
     (signal, sampleRate) = sf.read("./sample_1.wav")
-    it = stub.Analyze(gen(signal, sampleRate))
+    it = stub.Analyze(gen(signal, int(sampleRate/2)))
     try:
         for r in it:
             print(f"Neutralite = {r.emotion.neutral}")

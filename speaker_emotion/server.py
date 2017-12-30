@@ -27,72 +27,75 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
         self.NUMBER_MELS = 128
         self.CLASSES = ["neutral", "calm", "happy", "sad",
                         "angry", "fearful", "surprise", "disgust"]
+        self.Signal = []
 
     def refFun(self, S):
         return np.log10(1 + 10000 * S)
 
     def Analyze(self, request_iterator, context):
         global model, sess
-        execTime = time.time()
 
         for req in request_iterator:
-            signal = req.signal
+            self.Signal += req.signal
             sampleRate = req.sample_rate
+            print("sampleRate: ", sampleRate)
+            if len(self.Signal) > sampleRate:
+                execTime = time.time()
 
-            dataset_shape = (self.FRAME_LENGTH / 10) * self.NUMBER_MELS
-            X_test_vectors = [np.repeat(0, dataset_shape)]
-            signal = librosa.to_mono(np.transpose(signal))
-            trimmedSignal, _ = librosa.effects.trim(signal, top_db=50)
-            spectrogram = librosa.feature.melspectrogram(
-                trimmedSignal, sr=sampleRate, n_fft=1024, hop_length=160)
-            logSpectrogram = self.refFun(spectrogram)
+                signalChunk = self.Signal[:sampleRate + 1000]
+                self.Signal = self.Signal[sampleRate + 1000:]
+                print("chunkSize: ", len(signalChunk))
+                print("signalSize: ", len(self.Signal))
+                emotion = self.detect(signalChunk, sampleRate)
 
-            signalLength = float(len(trimmedSignal) / sampleRate) * 1000
-            indexPosition = 0
-            while indexPosition < signalLength - self.FRAME_LENGTH:
-                row = np.asarray(logSpectrogram[:, int(
-                    indexPosition / 10):int((indexPosition + self.FRAME_LENGTH) / 10)]).ravel()
-                X_test_vectors.append(row)
-                indexPosition += self.FRAME_LENGTH
+                execTime = time.time() - execTime
+                yield speaker_emotion_pb2.Response(
+                    emotion=emotion,
+                    exec_time=execTime
+                )
 
-            X_test_vectors = X_test_vectors[1:]
-            X_test = []
-            for i in range(len(X_test_vectors)):
-                matrix = np.zeros(
-                    (self.NUMBER_MELS, int(self.FRAME_LENGTH / 10)))
-                for l in range(self.NUMBER_MELS):
-                    for m in range(int(self.FRAME_LENGTH / 10)):
-                        matrix[l, m] = X_test_vectors[i][l *
-                                                         int(self.FRAME_LENGTH / 10) + m]
-                X_test.append([matrix])
+    def detect(self, signal, sampleRate):
+        global model, sess
 
-            with sess.graph.as_default():
-                predict = model.predict(X_test)
-            print(predict)
+        dataset_shape = (self.FRAME_LENGTH / 10) * self.NUMBER_MELS
+        X_test_vectors = [ np.repeat(0, dataset_shape) ]
+        signal = librosa.to_mono(np.transpose(signal))
+        trimmedSignal, _ = librosa.effects.trim(signal, top_db=50)
+        spectrogram = librosa.feature.melspectrogram(trimmedSignal, sr=sampleRate, n_fft=1024, hop_length=160)
 
-            # yield speaker_emotion_pb2.Response(
-            # neutral=predict[-1][0],
-            # calm=predict[-1][1],
-            # happy=predict[-1][2],
-            # sad=predict[-1][3],
-            # angry=predict[-1][4],
-            # fearful=predict[-1][5],
-            # surprise=predict[-1][6],
-            # disgust=predict[-1][7],
-            # exec_time=execTime)
-            execTime = time.time() - execTime
-            yield speaker_emotion_pb2.Response(
-                emotion=speaker_emotion_pb2.Emotion(
-                    neutral=len(req.signal),
-                    calm=0.2,
-                    happy=0.3,
-                    sad=0.4,
-                    angry=0.5,
-                    fearful=0.6,
-                    surprise=0.7,
-                    disgust=0.8),
-                exec_time=execTime
-            )
+        logSpectrogram = self.refFun(spectrogram)
+
+        signalLength = float(len(trimmedSignal) / sampleRate) * 1000
+        indexPosition = 0
+        while indexPosition < signalLength - self.FRAME_LENGTH:
+        	row = np.asarray(logSpectrogram[:, int(indexPosition / 10):int((indexPosition + self.FRAME_LENGTH) / 10)]).ravel()
+        	X_test_vectors.append(row)
+        	indexPosition += self.FRAME_LENGTH
+
+        X_test_vectors = X_test_vectors[1:]
+        X_test = []
+        for i in range(len(X_test_vectors)):
+        	matrix = np.zeros((self.NUMBER_MELS, int(self.FRAME_LENGTH / 10)))
+        	for l in range(self.NUMBER_MELS):
+        		for m in range(int(self.FRAME_LENGTH / 10)):
+        			matrix[l, m] = X_test_vectors[i][l * int(self.FRAME_LENGTH / 10) + m]
+        	X_test.append([matrix])
+
+        predict = model.predict(X_test)
+
+        with sess.graph.as_default():
+            predict = model.predict(X_test)
+        print(predict)
+
+        return speaker_emotion_pb2.Emotion(
+            neutral=predict[-1][0],
+            calm=predict[-1][1],
+            happy=predict[-1][2],
+            sad=predict[-1][3],
+            angry=predict[-1][4],
+            fearful=predict[-1][5],
+            surprise=predict[-1][6],
+            disgust=predict[-1][7])
 
 
 def serve():
