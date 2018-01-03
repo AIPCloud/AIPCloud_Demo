@@ -21,14 +21,14 @@ def check_or_download(path, fileName):
 
 def load_model():
     print("Checking if model is on server.")
-    check_or_download("/sound/emotion", "model.json")
-    check_or_download("/sound/emotion", "weights.h5")
+    check_or_download("/sound/change_detection", "model.json")
+    check_or_download("/sound/change_detection", "weights.h5")
     print("Model downloaded.")
-    print("Loading speaker emotion model.")
+    print("Loading speaker change detection model.")
     json_file = open(os.path.join("./data/model.json"), 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
     model.load_weights("./data/weights.h5")
-    print("Speaker emotion model succesfully loaded.")
+    print("Speaker change detection model succesfully loaded.")
     return model

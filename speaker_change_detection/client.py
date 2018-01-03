@@ -3,7 +3,7 @@ import grpc
 import speaker_change_detection_pb2
 import speaker_change_detection_pb2_grpc
 
-import soundfile as sf
+import librosa
 
 _SPEAKER_CHANGE_DETECTION_PORT = 50054
 
@@ -25,13 +25,15 @@ def run():
     stub = speaker_change_detection_pb2_grpc.SpeakerChangeDetectionStub(channel)
 
     # Reading file (test purposes)
-    (signal, sampleRate) = sf.read("./sample_1.wav")
-    it = stub.Analyze(gen(signal, sampleRate))
-    try:
-        for r in it:
-            print(f"Change Time = {r.change.time}")
-    except grpc._channel._Rendezvous as err:
-        print(err)
+    (signal, sampleRate) = librosa.load("./sample_3.wav")
+    res = stub.Analyze(speaker_change_detection_pb2.Request(signal=signal[:20*sampleRate], sample_rate=sampleRate))
+    print(res)
+    # it = stub.Analyze(gen(signal, sampleRate))
+    # try:
+    #     for r in it:
+    #         print(f"Change Time = {r.change.time}")
+    # except grpc._channel._Rendezvous as err:
+    #     print(err)
 
 
 if __name__ == "__main__":

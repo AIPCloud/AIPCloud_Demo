@@ -4,7 +4,7 @@ package speaker_change_detection;
 
 // Speaker Change Detection service definition.
 service SpeakerChangeDetection {
-  rpc Analyze (stream Request) returns (stream Response) {}
+  rpc Analyze (Request) returns (Response) {}
 }
 
 message Request {
@@ -12,11 +12,11 @@ message Request {
   int32 sample_rate = 2;
 }
 
-message Change {
-  float time = 1;
+message Changes {
+  repeated float time = 1;
 }
 
 message Response {
-  Change change= 1;
+  Changes changes = 1;
   float exec_time = 2;
 }
