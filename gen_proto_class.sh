@@ -6,6 +6,8 @@ python3 -m grpc_tools.protoc -I protos/ --python_out=./speaker_emotion --grpc_py
 
 python3 -m grpc_tools.protoc -I protos/ --python_out=./speech_to_text --grpc_python_out=./speech_to_text protos/speech_to_text.proto
 
+python3 -m grpc_tools.protoc -I protos/ --python_out=./speaker_change_detection --grpc_python_out=./speaker_change_detection protos/speaker_change_detection.proto
+
 python3 -m grpc_tools.protoc -I protos/ --python_out=./new_demo_portal --grpc_python_out=./new_demo_portal protos/new_demo_portal.proto
 cp **/*pb2.py new_demo_portal
 cp new_demo_portal/*pb2* front_to_back/server

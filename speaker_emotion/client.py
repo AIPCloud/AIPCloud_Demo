@@ -3,12 +3,12 @@ import grpc
 import speaker_emotion_pb2
 import speaker_emotion_pb2_grpc
 
-import soundfile as sf
+import librosa
 
 _SPEAKER_EMOTION_PORT = 50052
 
 
-def gen(array, chunkSize):
+def gen(array, chunkSize, sr):
     i = 0
     length = len(array)
     while i < length:
@@ -18,19 +18,18 @@ def gen(array, chunkSize):
                 chunk.append(array[j])
 
         i += chunkSize
-        yield speaker_emotion_pb2.Request(signal=chunk, sample_rate=chunkSize)
+        yield speaker_emotion_pb2.Request(signal=chunk, sample_rate=sr)
 
 def run():
     channel = grpc.insecure_channel('localhost:{}'.format(_SPEAKER_EMOTION_PORT))
     stub = speaker_emotion_pb2_grpc.SpeakerEmotionStub(channel)
 
     # Reading file (test purposes)
-    (signal, sampleRate) = sf.read("./sample_1.wav")
-
-    it = stub.Analyze(gen(signal, sampleRate))
+    (signal, sampleRate) = librosa.load("./sample_1.wav")
+    it = stub.Analyze(gen(signal, int(sampleRate), sampleRate))
     try:
         for r in it:
-            print(f"Neutralite = {r.emotion.neutral}")
+            print(f"Resultat = {r}")
     except grpc._channel._Rendezvous as err:
         print(err)
 

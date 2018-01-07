@@ -17,3 +17,7 @@
 
 aipcloud/
 node_modules/
+__pycache__/
+
+# Remove credential file
+aipcloud-987fc3f00757.json
