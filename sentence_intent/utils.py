@@ -21,9 +21,9 @@ def check_or_download(path, fileName):
 
 def load_model():
     print("Checking if model is on server.")
-    check_or_download("/text/sentiment", "FR_LSTM_model.json")
-    check_or_download("/text/sentiment", "FR_LSTM_weights.h5")
-    check_or_download("/text/sentiment", "FR.vocab")
+    check_or_download("/", "FR_LSTM_model.json")
+    check_or_download("/", "FR_LSTM_weights.h5")
+    check_or_download("/", "FR.vocab")
     print("Model downloaded.")
     print("Loading sentiment model.")
     json_file = open(os.path.join("./data/FR_LSTM_model.json"), 'r')
