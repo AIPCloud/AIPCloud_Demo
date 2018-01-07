@@ -17,3 +17,4 @@ Theano==1.0.1
 flask==0.12.2
 python-socketio==1.8.4
 eventlet==0.21.0
+pandas==0.22.0

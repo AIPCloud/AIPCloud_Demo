@@ -41,23 +41,27 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
 
     def Analyze(self, request_iterator, context):
         global model, sess
+        execTime = time.time()
         Signal = []
         for req in request_iterator:
             Signal += req.signal
             sampleRate = req.sample_rate
-            if len(Signal) > 2 * sampleRate:
-                execTime = time.time()
+        if len(Signal) > 2 * sampleRate:
+            with sess.graph.as_default():
+                emotion = self.detect(Signal, sampleRate, model=model)
+            emotionResponse = []
+            for e in emotion:
+                emotionResponse.append(speaker_emotion_pb2.Emotion(neutral=e[0], depleased=e[1], angry=e[2], surprised=e[3]))
 
-                signalChunk = Signal
-                Signal = Signal[sampleRate:]
-                with sess.graph.as_default():
-                    emotion = self.detect(signalChunk, sampleRate, model=model)
-
-                execTime = time.time() - execTime
-                yield speaker_emotion_pb2.Response(
-                    emotion=emotion,
-                    exec_time=execTime
-                )
+            execTime = time.time() - execTime
+            return speaker_emotion_pb2.Response(
+                emotions=emotionResponse,
+                exec_time=execTime,
+                empty=False
+            )
+        else:
+            execTime = time.time() - execTime
+            return speaker_emotion_pb2.Response(exec_time=execTime, empty=True)
 
     def detect(self, signal, sampleRate, model=False, debug=False):
         if not model:
@@ -95,7 +99,7 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
         X_test_vectors = X_test_vectors[1:]
         X_test = []
         for i in range(len(X_test_vectors)):
-            matrix = np.zeros((self.NUMBER_MELS, int(FRAME_LENGTH / 10)))
+            matrix = np.zeros((self.NUMBER_MELS, int(self.FRAME_LENGTH / 10)))
             for l in range(self.NUMBER_MELS):
                 for m in range(int(self.FRAME_LENGTH / 10)):
                     matrix[l, m] = X_test_vectors[i][l *
@@ -104,9 +108,7 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
         X_test = np.asarray(X_test)
         predict = model.predict(X_test)
 
-        print(predict)
-        return speaker_emotion_pb2.Emotion(neutral=predict[-1][0], depleased=predict[-1][1], angry=predict[-1][2], surprised=predict[-1][3])
-
+        return predict
 
 
 def serve():

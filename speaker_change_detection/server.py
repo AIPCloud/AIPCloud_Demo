@@ -21,40 +21,26 @@ K.set_session(sess)  # K is keras backend
 model = load_model()
 
 class SpeakerChangeDetection(speaker_change_detection_pb2_grpc.SpeakerChangeDetectionServicer):
-    def __init__(self):
-        self.sampleRate = 0
-
-    def Analyze(self, request, context):
+    def Analyze(self, request_iterator, context):
         global model, sess
-        execTime = time.time()
+        sampleRate = False
         Signal = []
-
-        with sess.graph.as_default():
-            changes = detect(request.signal, request.sample_rate, model=model)
-
-        execTime = time.time() - execTime
-        return speaker_change_detection_pb2.Response(changes=speaker_change_detection_pb2.Changes(time=changes), exec_time=execTime)
-
-        # lastAnalysis = 0
-        # for r in request_iterator:
-        # 	self.sampleRate = r.sample_rate
-        # 	Signal += r.signal
-        # 	analysisSize = 3 * self.sampleRate
-            # if len(Signal) - analysisSize > lastAnalysis:
-        # 		print("We have enough data to run an analysis.")
-        # 		# res = detect(lastAnalysis, lastAnalysis + analysisSize)
-        # 		res = detect(Signal, self.sampleRate, framing=False)
-        # 		lastAnalysis += 0.5 * analysisSize
-        # 		yield speaker_change_detection_pb2.Response(
-        # 		change=speaker_change_detection_pb2.Change(time=res),
-        # 		exec_time=execTime)
-        # res = detect(Signal, len(Signal) - analysisSize, len(Signal))
-        # yield speaker_change_detection_pb2.Response(
-        # change=speaker_change_detection_pb2.Change(time=res),
-        # exec_time=execTime)
-
-
-
+        signalChunk = []
+        for req in request_iterator:
+            if sampleRate and sampleRate != req.sample_rate:
+                raise Exception("Sample rate changed during streaming.")
+            sampleRate = req.sample_rate
+            signalChunk += req.signal
+            if len(signalChunk) > 3 * sampleRate:
+                with sess.graph.as_default():
+                    execTime = time.time()
+                    t_0 = len(Signal) / sampleRate
+                    changes = detect(signalChunk, sampleRate, model=model)
+                for change in changes:
+                    change += t_0
+                    yield speaker_change_detection_pb2.Response(change=speaker_change_detection_pb2.Change(time=change), exec_time=time.time() - execTime)
+                signalChunk = []
+            Signal += req.signal
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

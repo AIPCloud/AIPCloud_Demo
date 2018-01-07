@@ -14,7 +14,7 @@ class SpeakerEmotionStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.Analyze = channel.stream_stream(
+    self.Analyze = channel.stream_unary(
         '/speaker_emotion.SpeakerEmotion/Analyze',
         request_serializer=speaker__emotion__pb2.Request.SerializeToString,
         response_deserializer=speaker__emotion__pb2.Response.FromString,
@@ -35,7 +35,7 @@ class SpeakerEmotionServicer(object):
 
 def add_SpeakerEmotionServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'Analyze': grpc.stream_stream_rpc_method_handler(
+      'Analyze': grpc.stream_unary_rpc_method_handler(
           servicer.Analyze,
           request_deserializer=speaker__emotion__pb2.Request.FromString,
           response_serializer=speaker__emotion__pb2.Response.SerializeToString,

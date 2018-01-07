@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='speaker_emotion.proto',
   package='speaker_emotion',
   syntax='proto3',
-  serialized_pb=_b('\n\x15speaker_emotion.proto\x12\x0fspeaker_emotion\"2\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\"\x87\x01\n\x07\x45motion\x12\x0f\n\x07neutral\x18\x01 \x01(\x02\x12\x0c\n\x04\x63\x61lm\x18\x02 \x01(\x02\x12\r\n\x05happy\x18\x03 \x01(\x02\x12\x0b\n\x03sad\x18\x04 \x01(\x02\x12\r\n\x05\x61ngry\x18\x05 \x01(\x02\x12\x0f\n\x07\x66\x65\x61rful\x18\x06 \x01(\x02\x12\x10\n\x08surprise\x18\x07 \x01(\x02\x12\x0f\n\x07\x64isgust\x18\x08 \x01(\x02\"H\n\x08Response\x12)\n\x07\x65motion\x18\x01 \x01(\x0b\x32\x18.speaker_emotion.Emotion\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32V\n\x0eSpeakerEmotion\x12\x44\n\x07\x41nalyze\x12\x18.speaker_emotion.Request\x1a\x19.speaker_emotion.Response\"\x00(\x01\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x15speaker_emotion.proto\x12\x0fspeaker_emotion\"2\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\"O\n\x07\x45motion\x12\x0f\n\x07neutral\x18\x01 \x01(\x02\x12\x11\n\tdepleased\x18\x02 \x01(\x02\x12\r\n\x05\x61ngry\x18\x03 \x01(\x02\x12\x11\n\tsurprised\x18\x04 \x01(\x02\"X\n\x08Response\x12*\n\x08\x65motions\x18\x01 \x03(\x0b\x32\x18.speaker_emotion.Emotion\x12\x11\n\texec_time\x18\x02 \x01(\x02\x12\r\n\x05\x65mpty\x18\x03 \x01(\x08\x32T\n\x0eSpeakerEmotion\x12\x42\n\x07\x41nalyze\x12\x18.speaker_emotion.Request\x1a\x19.speaker_emotion.Response\"\x00(\x01\x62\x06proto3')
 )
 
 
@@ -78,50 +78,22 @@ _EMOTION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='calm', full_name='speaker_emotion.Emotion.calm', index=1,
+      name='depleased', full_name='speaker_emotion.Emotion.depleased', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='happy', full_name='speaker_emotion.Emotion.happy', index=2,
+      name='angry', full_name='speaker_emotion.Emotion.angry', index=2,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='sad', full_name='speaker_emotion.Emotion.sad', index=3,
+      name='surprised', full_name='speaker_emotion.Emotion.surprised', index=3,
       number=4, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='angry', full_name='speaker_emotion.Emotion.angry', index=4,
-      number=5, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='fearful', full_name='speaker_emotion.Emotion.fearful', index=5,
-      number=6, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='surprise', full_name='speaker_emotion.Emotion.surprise', index=6,
-      number=7, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='disgust', full_name='speaker_emotion.Emotion.disgust', index=7,
-      number=8, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -138,8 +110,8 @@ _EMOTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=95,
-  serialized_end=230,
+  serialized_start=94,
+  serialized_end=173,
 )
 
 
@@ -151,9 +123,9 @@ _RESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='emotion', full_name='speaker_emotion.Response.emotion', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='emotions', full_name='speaker_emotion.Response.emotions', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -161,6 +133,13 @@ _RESPONSE = _descriptor.Descriptor(
       name='exec_time', full_name='speaker_emotion.Response.exec_time', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='empty', full_name='speaker_emotion.Response.empty', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -176,11 +155,11 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=232,
-  serialized_end=304,
+  serialized_start=175,
+  serialized_end=263,
 )
 
-_RESPONSE.fields_by_name['emotion'].message_type = _EMOTION
+_RESPONSE.fields_by_name['emotions'].message_type = _EMOTION
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
 DESCRIPTOR.message_types_by_name['Emotion'] = _EMOTION
 DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
@@ -217,8 +196,8 @@ _SPEAKEREMOTION = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=306,
-  serialized_end=392,
+  serialized_start=265,
+  serialized_end=349,
   methods=[
   _descriptor.MethodDescriptor(
     name='Analyze',

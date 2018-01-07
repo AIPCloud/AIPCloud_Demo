@@ -4,7 +4,7 @@ package speaker_emotion;
 
 // Speaker Emotion service definition.
 service SpeakerEmotion {
-  rpc Analyze (stream Request) returns (stream Response) {}
+  rpc Analyze (stream Request) returns (Response) {}
 }
 
 message Request {
@@ -20,6 +20,7 @@ message Emotion {
 }
 
 message Response {
-  Emotion emotion = 1;
+  repeated Emotion emotions = 1;
   float exec_time = 2;
+  bool empty = 3;
 }

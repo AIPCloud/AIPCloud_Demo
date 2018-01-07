@@ -25,13 +25,9 @@ def run():
     stub = speaker_emotion_pb2_grpc.SpeakerEmotionStub(channel)
 
     # Reading file (test purposes)
-    (signal, sampleRate) = librosa.load("./sample_1.wav")
-    it = stub.Analyze(gen(signal, int(sampleRate), sampleRate))
-    try:
-        for r in it:
-            print(f"Resultat = {r}")
-    except grpc._channel._Rendezvous as err:
-        print(err)
+    (signal, sampleRate) = librosa.load("./sample_multi.wav")
+    res = stub.Analyze(gen(signal, int(sampleRate), sampleRate))
+    print("Resultat = {r}".format(r=res.emotions[2]))
 
 
 if __name__ == "__main__":
