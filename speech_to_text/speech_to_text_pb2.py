@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='speech_to_text.proto',
   package='speech_to_text',
   syntax='proto3',
-  serialized_pb=_b('\n\x14speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"\x1c\n\x06Speech\x12\x12\n\ntranscript\x18\x01 \x01(\t\"E\n\x08Response\x12&\n\x06speech\x18\x01 \x01(\x0b\x32\x16.speech_to_text.Speech\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32R\n\x0cSpeechToText\x12\x42\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x14speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"\x1c\n\x06Speech\x12\x12\n\ntranscript\x18\x01 \x01(\t\"G\n\x08Response\x12(\n\x08speeches\x18\x01 \x03(\x0b\x32\x16.speech_to_text.Speech\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32R\n\x0cSpeechToText\x12\x42\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00\x62\x06proto3')
 )
 
 
@@ -109,9 +109,9 @@ _RESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='speech', full_name='speech_to_text.Response.speech', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='speeches', full_name='speech_to_text.Response.speeches', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -135,10 +135,10 @@ _RESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=145,
-  serialized_end=214,
+  serialized_end=216,
 )
 
-_RESPONSE.fields_by_name['speech'].message_type = _SPEECH
+_RESPONSE.fields_by_name['speeches'].message_type = _SPEECH
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
 DESCRIPTOR.message_types_by_name['Speech'] = _SPEECH
 DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
@@ -175,8 +175,8 @@ _SPEECHTOTEXT = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=216,
-  serialized_end=298,
+  serialized_start=218,
+  serialized_end=300,
   methods=[
   _descriptor.MethodDescriptor(
     name='Recognition',

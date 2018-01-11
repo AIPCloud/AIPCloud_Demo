@@ -26,7 +26,7 @@ W2V, model = load_model()
 
 class SentenceSentiment(sentence_sentiment_pb2_grpc.SentenceSentimentServicer):
     def __init__(self):
-        self.MAX_LENGTH = 66
+        self.MAX_LENGTH = 300
         self.TOP_WORDS = 40000
 
     def Analyze(self, request, context):

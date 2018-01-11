@@ -18,6 +18,6 @@ message Speech {
 }
 
 message Response {
-  Speech speech = 1;
+  repeated Speech speeches = 1;
   float exec_time = 2;
 }

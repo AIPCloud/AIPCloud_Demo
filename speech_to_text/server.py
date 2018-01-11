@@ -20,9 +20,11 @@ _PORT = 50053
 class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
     def __init__(self):
         credentials = service_account.Credentials.from_service_account_file(
-            './aipcloud-987fc3f00757.json')
+            './aipcloud-212946bdf7b7.json')
+        scoped_credentials = credentials.with_scopes(
+            ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/devstorage.full_control'])
         storageClient = storage.Client(
-            project="aipcloud-179518", credentials=credentials)
+            project="aipcloud-179518", credentials=scoped_credentials)
         self.bucketName = "aipcloud-bucket"
         # Get bucket:
         try:
@@ -30,7 +32,7 @@ class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
         except exceptions.NotFound:
             raise Exception('Sorry, that bucket does not exist!')
         # Instantiates a client
-        self.speechClient = speech.SpeechClient()
+        self.speechClient = speech.SpeechClient(credentials=scoped_credentials)
 
     def Recognition(self, request, context):
         execTime = time.time()
@@ -71,17 +73,23 @@ class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
 
             results = []
             for res in operationResults:
-                results.append(res.alternatives[0].transcript)
+                results.append(speech_to_text_pb2.Speech(transcript=res.alternatives[0].transcript))
             blob.delete()
         except:
             # Delete file from GCS and locally
-            os.remove(fileName)
-            blob.delete()
+            if os.path.isfile(fileName):
+                os.remove(fileName)
+            if blob:
+                blob.delete()
+            execTime = time.time() - execTime
+            return speech_to_text_pb2.Response(
+                speeches=[speech_to_text_pb2.Speech(
+                    transcript="Error while converting speech to text.")],
+                exec_time=execTime)
 
         execTime = time.time() - execTime
         return speech_to_text_pb2.Response(
-            speech=speech_to_text_pb2.Speech(
-                transcript=results),
+            speeches=results,
             exec_time=execTime)
 
 
