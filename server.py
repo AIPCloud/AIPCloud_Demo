@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from sentence_intent.server import serve as serve_sentence_intent
 from sentence_sentiment.server import serve as serve_sentence_sentiment
 from speaker_change_detection.server import serve as serve_speaker_change_detection
