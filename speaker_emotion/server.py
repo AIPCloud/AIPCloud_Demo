@@ -14,17 +14,14 @@ from .utils import load_model
 import configparser
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-_PORT = 50052
+_PORT = 50054
 
-config = tf.ConfigProto(log_device_placement=False, allow_soft_placement=True)
-sess = tf.Session(config=config)
-K.set_learning_phase(False)
-K.set_session(sess)  # K is keras backend
 model = load_model()
-
+graph = tf.get_default_graph()
 
 class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
-    def __init__(self):
+    def __init__(self, graph, model):
+        self.graph = graph
         # Setting parameters
 
         cfg = configparser.ConfigParser()
@@ -40,15 +37,14 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
         return np.log10(1 + 10000 * S)
 
     def Analyze(self, request_iterator, context):
-        global model, sess
         execTime = time.time()
         Signal = []
         for req in request_iterator:
             Signal += req.signal
             sampleRate = req.sample_rate
         if len(Signal) > 2 * sampleRate:
-            with sess.graph.as_default():
-                emotion = self.detect(Signal, sampleRate, model=model)
+            with self.graph.as_default():
+                emotion = self.detect(Signal, sampleRate, model=self.model)
             emotionResponse = []
             for e in emotion:
                 emotionResponse.append(speaker_emotion_pb2.Emotion(neutral=e[0], depleased=e[1], angry=e[2], surprised=e[3]))
@@ -64,16 +60,6 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
             return speaker_emotion_pb2.Response(exec_time=execTime, empty=True)
 
     def detect(self, signal, sampleRate, model=False, debug=False):
-        if not model:
-            # Loading model
-            json_file = open('output/model.json', 'r')
-            loaded_model_json = json_file.read()
-            json_file.close()
-            model = model_from_json(loaded_model_json)
-            model.load_weights("output/weights.h5")
-            print("* Loaded model from disk")
-            # Loading train and validation set
-
         dataset_shape = (self.FRAME_LENGTH / 10) * self.NUMBER_MELS
         X_test_vectors = [np.repeat(0, dataset_shape)]
 
@@ -112,9 +98,10 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
 
 
 def serve():
+    global model, graph
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     speaker_emotion_pb2_grpc.add_SpeakerEmotionServicer_to_server(
-        SpeakerEmotion(), server)
+        SpeakerEmotion(graph, model), server)
     server.add_insecure_port('[::]:{}'.format(_PORT))
     server.start()
     print("Starting SpeakerEmotion Server on port {}...".format(_PORT))

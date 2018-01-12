@@ -3,7 +3,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var nsp = io.of('/new_demo_portal')
 
-var PROTO_PATH = __dirname + '/../../protos/new_demo_portal.proto';
 
 var async = require('async');
 var fs = require('fs');
@@ -16,12 +15,12 @@ var _PROTO_PATH = path.resolve(__dirname, '../../protos')
 
 var grpc = require('grpc');
 
-var speaker_change_detection = grpc.load(_PROTO_PATH + '/speaker_change_detection.proto').speaker_change_detection;
-var SCDclient = new speaker_change_detection.SpeakerChangeDetection(_SERVER_ADDRESS + ':50054',
+var speaker_change_detection = grpc.load(_PROTO_PATH + '/speaker_change_detection/speaker_change_detection.proto').speaker_change_detection;
+var SCDclient = new speaker_change_detection.SpeakerChangeDetection(_SERVER_ADDRESS + ':50053',
   grpc.credentials.createInsecure());
 
-var speech_to_text = grpc.load(_PROTO_PATH + '/speech_to_text.proto').speech_to_text;
-var S2Tclient = new speech_to_text.SpeechToText(_SERVER_ADDRESS + ':50053',
+var speech_to_text = grpc.load(_PROTO_PATH + '/speech_to_text/speech_to_text.proto').speech_to_text;
+var S2Tclient = new speech_to_text.SpeechToText(_SERVER_ADDRESS + ':50055',
   grpc.credentials.createInsecure());
 
 app.get('/', function(req, res){

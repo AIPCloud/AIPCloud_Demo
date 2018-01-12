@@ -13,16 +13,17 @@ from speaker_change_detection import speaker_change_detection_pb2
 from speaker_change_detection import speaker_change_detection_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-_PORT = 50054
+_PORT = 50053
 
-config = tf.ConfigProto(log_device_placement=False, allow_soft_placement=True)
-sess = tf.Session(config=config)
-K.set_session(sess)  # K is keras backend
-model = load_model()
 
 class SpeakerChangeDetection(speaker_change_detection_pb2_grpc.SpeakerChangeDetectionServicer):
+    def __init__(self):
+        config = tf.ConfigProto(log_device_placement=False, allow_soft_placement=True)
+        self.sess = tf.Session(config=config)
+        K.set_session(self.sess)  # K is keras backend
+        self.model = load_model()
+
     def Analyze(self, request_iterator, context):
-        global model, sess
         sampleRate = False
         Signal = []
         signalChunk = []
@@ -32,10 +33,10 @@ class SpeakerChangeDetection(speaker_change_detection_pb2_grpc.SpeakerChangeDete
             sampleRate = req.sample_rate
             signalChunk += req.signal
             if len(signalChunk) > 3 * sampleRate:
-                with sess.graph.as_default():
+                with self.sess.graph.as_default():
                     execTime = time.time()
                     t_0 = len(Signal) / sampleRate
-                    changes = detect(signalChunk, sampleRate, model=model)
+                    changes = detect(signalChunk, sampleRate, model=self.model)
                 for change in changes:
                     change += t_0
                     yield speaker_change_detection_pb2.Response(change=speaker_change_detection_pb2.Change(time=change), exec_time=time.time() - execTime)

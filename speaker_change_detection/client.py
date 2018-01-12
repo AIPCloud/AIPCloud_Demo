@@ -1,11 +1,11 @@
 import grpc
 
-import speaker_change_detection_pb2
-import speaker_change_detection_pb2_grpc
+from speaker_change_detection import speaker_change_detection_pb2
+from speaker_change_detection import speaker_change_detection_pb2_grpc
 
 import librosa
 
-_SPEAKER_CHANGE_DETECTION_PORT = 50054
+_SPEAKER_CHANGE_DETECTION_PORT = 50053
 
 
 def gen(array, chunkSize, sr):

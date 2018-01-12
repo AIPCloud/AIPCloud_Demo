@@ -14,7 +14,7 @@ from google.cloud import speech, storage, exceptions
 from google.cloud.speech import enums, types
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-_PORT = 50053
+_PORT = 50055
 
 
 class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
