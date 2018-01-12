@@ -24,7 +24,7 @@ export default class ReactMic extends Component {
   }
 
   componentDidMount() {
-    const { onStop, onStart, audioElem, audioBitsPerSecond, mimeType } = this.props;
+    const { onStop, onStart, dataCallback, audioElem, audioBitsPerSecond, mimeType } = this.props;
     const { visualizer } = this.refs;
     const canvas = visualizer;
     const canvasCtx = canvas.getContext("2d");
@@ -50,7 +50,7 @@ export default class ReactMic extends Component {
 
       this.setState({
         analyser            : analyser,
-        microphoneRecorder  : new MicrophoneRecorder(onStart, onStop, options),
+        microphoneRecorder  : new MicrophoneRecorder(onStart, onStop, dataCallback, options),
         canvas              : canvas,
         canvasCtx           : canvasCtx
       }, () => {
@@ -107,7 +107,8 @@ ReactMic.propTypes = {
   mimeType        : string,
   height          : number,
   record          : bool.isRequired,
-  onStop          : func
+  onStop          : func,
+  dataCallback    : func
 };
 
 ReactMic.defaultProps = {

@@ -8,13 +8,17 @@ import MicrophoneOff               from 'material-ui/svg-icons/av/stop';
 
 import { ReactMic, saveRecording } from '../../src';
 import sampleAudio                 from './sample_audio.webm';
-import ReactGA                     from 'react-ga';
+import io from 'socket.io-client';
+
+const socket = io("http://localhost:5001/new_demo_portal")
+socket.on('analysis_response', (data) => {
+    console.log(data);
+})
+socket.emit('start_demo')
 
 require ('./styles.scss');
 
 injectTapEventPlugin();
-
-ReactGA.initialize('UA-98862819-1');
 
 export default class Demo extends Component {
   constructor(props){
@@ -27,7 +31,6 @@ export default class Demo extends Component {
   }
 
   componentDidMount() {
-    ReactGA.pageview(window.location.pathname);
   }
 
   startRecording= () => {
@@ -42,6 +45,13 @@ export default class Demo extends Component {
       record: false,
       isRecording: false
     });
+  }
+
+  dataCallback=(b) => {
+    socket.emit("audio_buffer", {
+      sample_rate: b.sampleRate,
+      signal: b.getChannelData(0)
+    })
   }
 
   onStart=() => {
@@ -61,16 +71,16 @@ export default class Demo extends Component {
       <MuiThemeProvider>
         <div>
           <h1>React-Mic</h1>
-          <p><a href="https://github.com/hackingbeauty/react-mic">Documentation</a></p>
           <ReactMic
             className="oscilloscope"
             record={this.state.record}
-            backgroundColor="#FF4081"
+            backgroundColor="#000000"
             visualSetting="sinewave"
             audioBitsPerSecond= {128000}
             onStop={this.onStop}
             onStart={this.onStart}
-            strokeColor="#000000" />
+            dataCallback={this.dataCallback}
+            strokeColor="#FFFFFF" />
           <div>
             <audio ref="audioSource" controls="controls" src={this.state.blobURL}></audio>
           </div>
@@ -90,15 +100,6 @@ export default class Demo extends Component {
             onClick={this.stopRecording}>
             <MicrophoneOff />
           </FloatingActionButton>
-          <br />
-          <br />
-          <br />
-          <p>As featured in the course <br /><a href="http://singlepageapplication.com">How to Write a Single Page Application</a></p>
-          <br />
-          <br />
-          <p>Check out how I use it in my app
-          <br />
-            <a href="http://voicerecordpro.com" target="_blank">Voice Record Pro</a> (record your voice and publish it)</p>
         </div>
     </MuiThemeProvider>
     );

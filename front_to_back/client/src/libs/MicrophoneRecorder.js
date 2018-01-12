@@ -1,14 +1,5 @@
 import toBuffer from 'blob-to-buffer';
 import AudioContext from './AudioContext';
-import io from 'socket.io-client';
-
-//////////////SOCKET///////////////
-const socket = io("http://localhost:5001/new_demo_portal")
-socket.on('analysis_response', (data) => {
-    console.log(data);
-})
-socket.emit('start_demo')
-//////////////SOCKET///////////////
 
 
 
@@ -22,6 +13,7 @@ let mediaOptions;
 let blobObject;
 let onStartCallback;
 let onStopCallback;
+let dataCallback;
 
 const constraints = {
   audio: true,
@@ -31,9 +23,10 @@ const constraints = {
 navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
 export class MicrophoneRecorder {
-  constructor(onStart, onStop, options) {
+  constructor(onStart, onStop, data, options) {
     onStartCallback = onStart;
     onStopCallback = onStop;
+    dataCallback = data;
     mediaOptions = options;
   }
 
@@ -78,9 +71,6 @@ export class MicrophoneRecorder {
           };
 
           mediaRecorder.onstop = this.onStop;
-          mediaRecorder.ondataavailable = (event) => {
-            chunks.push(event.data);
-          }
 
           audioCtx = AudioContext.getAudioContext();
           analyser = AudioContext.getAnalyser();
@@ -93,14 +83,9 @@ export class MicrophoneRecorder {
           source.connect(processor);
           processor.connect(audioCtx.destination);
 
-          // var nsp = socks.of('/new_demo_portal');
-
           processor.onaudioprocess = (e) => {
             let b = e.inputBuffer
-            socket.emit("audio_buffer", {
-              sample_rate: b.sampleRate,
-              signal: b.getChannelData(0)
-            })
+            dataCallback(b)
           }
         });
       } else {
@@ -120,8 +105,6 @@ export class MicrophoneRecorder {
   }
 
   onStop(evt) {
-    socket.emit('stop_demo')
-
     const blob = new Blob(chunks, {'type': mediaOptions.mimeType});
     chunks = [];
 
