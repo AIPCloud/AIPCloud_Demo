@@ -3,14 +3,15 @@ import grpc
 import time
 import os
 
-import sentence_intent_pb2
-import sentence_intent_pb2_grpc
+from sentence_intent import sentence_intent_pb2
+from sentence_intent import sentence_intent_pb2_grpc
 
 import numpy as np
 import nltk
 from keras import backend as K
 import tensorflow as tf
-from utils import word2vec, load_model
+
+from .utils import word2vec, load_model
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 _PORT = 50055

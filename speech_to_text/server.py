@@ -4,8 +4,8 @@ import time
 import os
 from uuid import uuid4
 
-import speech_to_text_pb2
-import speech_to_text_pb2_grpc
+from speech_to_text import speech_to_text_pb2
+from speech_to_text import speech_to_text_pb2_grpc
 
 import soundfile as sf
 # Imports the Google Cloud client library
@@ -20,7 +20,7 @@ _PORT = 50053
 class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
     def __init__(self):
         credentials = service_account.Credentials.from_service_account_file(
-            '../aipcloud-987fc3f00757.json')
+            os.path.join(os.path.dirname(__file__), '../aipcloud-987fc3f00757.json'))
         scoped_credentials = credentials.with_scopes(
             ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/devstorage.full_control'])
         storageClient = storage.Client(

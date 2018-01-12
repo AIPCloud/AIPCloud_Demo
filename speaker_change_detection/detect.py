@@ -17,10 +17,10 @@ import librosa
 from sklearn import mixture
 #import matplotlib.mlab as mlab
 from scipy.stats import norm
-from signal_proc import ShortTermEnergy, SpectralCentroids
+from .signal_proc import ShortTermEnergy, SpectralCentroids
 
 cfg = configparser.ConfigParser()
-cfg.read('config.cfg')
+cfg.read(os.path.join(os.path.dirname(__file__), './config.cfg'))
 
 # We load all the parameters
 PARAM_HAMMING_LENGTH = int(cfg.get("FEATURE", "win_length"))
