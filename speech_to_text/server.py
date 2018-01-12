@@ -34,19 +34,28 @@ class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
         # Instantiates a client
         self.speechClient = speech.SpeechClient(credentials=scoped_credentials)
 
-    def Recognition(self, request, context):
+    def Recognition(self, request_iterator, context):
         execTime = time.time()
+        signal = []
+        sampleRate = None
+        languageCode = None
+        for req in request_iterator:
+            signal += req.signal
+            if not sampleRate:
+                sampleRate = req.sample_rate
+            if not languageCode:
+                languageCode = req.language_code
         try:
             # Set speech recognition config
             config = types.RecognitionConfig(
                 encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-                sample_rate_hertz=request.sample_rate,
-                language_code=request.language_code)
+                sample_rate_hertz=sampleRate,
+                language_code=languageCode)
 
             # Write an audio file based on request signal
             print("Writing audio file based on signal.")
             fileName = str(uuid4()) + '.wav'
-            sf.write(fileName, request.signal, request.sample_rate)
+            sf.write(fileName, signal, sampleRate)
             # UPLOAD THE FILE TO GCS
             blob = self.bucket.blob(fileName)
             print("Uploading audio file.")
@@ -84,7 +93,7 @@ class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
             execTime = time.time() - execTime
             return speech_to_text_pb2.Response(
                 speeches=[speech_to_text_pb2.Speech(
-                    transcript="Error while converting speech to text.")],
+                    transcript="")],
                 exec_time=execTime)
 
         execTime = time.time() - execTime

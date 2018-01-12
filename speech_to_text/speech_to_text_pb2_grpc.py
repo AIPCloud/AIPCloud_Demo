@@ -14,7 +14,7 @@ class SpeechToTextStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.Recognition = channel.unary_unary(
+    self.Recognition = channel.stream_unary(
         '/speech_to_text.SpeechToText/Recognition',
         request_serializer=speech__to__text_dot_speech__to__text__pb2.Request.SerializeToString,
         response_deserializer=speech__to__text_dot_speech__to__text__pb2.Response.FromString,
@@ -25,7 +25,7 @@ class SpeechToTextServicer(object):
   """Speech To Text service definition.
   """
 
-  def Recognition(self, request, context):
+  def Recognition(self, request_iterator, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -35,7 +35,7 @@ class SpeechToTextServicer(object):
 
 def add_SpeechToTextServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'Recognition': grpc.unary_unary_rpc_method_handler(
+      'Recognition': grpc.stream_unary_rpc_method_handler(
           servicer.Recognition,
           request_deserializer=speech__to__text_dot_speech__to__text__pb2.Request.FromString,
           response_serializer=speech__to__text_dot_speech__to__text__pb2.Response.SerializeToString,

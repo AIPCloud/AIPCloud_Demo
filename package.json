@@ -27,11 +27,13 @@
   "dependencies": {
     "async": "^2.6.0",
     "audio-loader": "^1.0.3",
+    "bluebird": "^3.5.1",
     "builder": "^3.2.3",
     "express": "^4.16.2",
     "fs": "0.0.1-security",
     "google-protobuf": "^3.5.0",
     "grpc": "^1.8.0",
+    "grpc-caller": "^0.3.1",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "socket.io": "^2.0.4"

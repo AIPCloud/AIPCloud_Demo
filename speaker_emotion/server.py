@@ -22,6 +22,7 @@ graph = tf.get_default_graph()
 class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
     def __init__(self, graph, model):
         self.graph = graph
+        self.model = model
         # Setting parameters
 
         cfg = configparser.ConfigParser()
@@ -39,9 +40,11 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
     def Analyze(self, request_iterator, context):
         execTime = time.time()
         Signal = []
+        sampleRate = None
         for req in request_iterator:
             Signal += req.signal
-            sampleRate = req.sample_rate
+            if not sampleRate:
+                sampleRate = req.sample_rate
         if len(Signal) > 2 * sampleRate:
             with self.graph.as_default():
                 emotion = self.detect(Signal, sampleRate, model=self.model)

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='speech_to_text/speech_to_text.proto',
   package='speech_to_text',
   syntax='proto3',
-  serialized_pb=_b('\n#speech_to_text/speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"\x1c\n\x06Speech\x12\x12\n\ntranscript\x18\x01 \x01(\t\"G\n\x08Response\x12(\n\x08speeches\x18\x01 \x03(\x0b\x32\x16.speech_to_text.Speech\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32R\n\x0cSpeechToText\x12\x42\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n#speech_to_text/speech_to_text.proto\x12\x0espeech_to_text\"I\n\x07Request\x12\x12\n\x06signal\x18\x01 \x03(\x02\x42\x02\x10\x01\x12\x13\n\x0bsample_rate\x18\x02 \x01(\x05\x12\x15\n\rlanguage_code\x18\x03 \x01(\t\"\x1c\n\x06Speech\x12\x12\n\ntranscript\x18\x01 \x01(\t\"G\n\x08Response\x12(\n\x08speeches\x18\x01 \x03(\x0b\x32\x16.speech_to_text.Speech\x12\x11\n\texec_time\x18\x02 \x01(\x02\x32T\n\x0cSpeechToText\x12\x44\n\x0bRecognition\x12\x17.speech_to_text.Request\x1a\x18.speech_to_text.Response\"\x00(\x01\x62\x06proto3')
 )
 
 
@@ -176,7 +176,7 @@ _SPEECHTOTEXT = _descriptor.ServiceDescriptor(
   index=0,
   options=None,
   serialized_start=233,
-  serialized_end=315,
+  serialized_end=317,
   methods=[
   _descriptor.MethodDescriptor(
     name='Recognition',

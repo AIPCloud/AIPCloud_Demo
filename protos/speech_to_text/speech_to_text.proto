@@ -4,7 +4,7 @@ package speech_to_text;
 
 // Speech To Text service definition.
 service SpeechToText {
-  rpc Recognition (Request) returns (Response) {}
+  rpc Recognition (stream Request) returns (Response) {}
 }
 
 message Request {
