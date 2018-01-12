@@ -20,7 +20,7 @@ _PORT = 50053
 class SpeechToText(speech_to_text_pb2_grpc.SpeechToTextServicer):
     def __init__(self):
         credentials = service_account.Credentials.from_service_account_file(
-            './aipcloud-212946bdf7b7.json')
+            '../aipcloud-212946bdf7b7.json')
         scoped_credentials = credentials.with_scopes(
             ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/devstorage.full_control'])
         storageClient = storage.Client(
