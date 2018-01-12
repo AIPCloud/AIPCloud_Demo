@@ -3,7 +3,7 @@ import AudioContext from './AudioContext';
 import io from 'socket.io-client';
 
 //////////////SOCKET///////////////
-const socket = io("http://192.168.0.10:5001/new_demo_portal")
+const socket = io("http://localhost:5001/new_demo_portal")
 socket.on('analysis_response', (data) => {
     console.log(data);
 })
