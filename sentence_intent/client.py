@@ -1,14 +1,14 @@
 import grpc
 
-import sentence_sentiment_pb2
-import sentence_sentiment_pb2_grpc
+import sentence_intent_pb2
+import sentence_intent_pb2_grpc
 
-_SENTENCE_SENTIMENT_PORT = 50051
+_SENTENCE_SENTIMENT_PORT = 50055
 
 def run():
     channel = grpc.insecure_channel('localhost:{}'.format(_SENTENCE_SENTIMENT_PORT))
-    stub = sentence_sentiment_pb2_grpc.SentenceSentimentStub(channel)
-    res = stub.Analyze(sentence_sentiment_pb2.Request(sentence="Je teste cette phrase maintenant tout de suite, je suis très content!"))
+    stub = sentence_intent_pb2_grpc.SentenceIntentStub(channel)
+    res = stub.Analyze(sentence_intent_pb2.Request(sentence="Rendez-moi mon paravent tout de suite!"))
     print(res)
 
 

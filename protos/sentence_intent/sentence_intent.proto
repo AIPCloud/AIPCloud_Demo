@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package sentence_intent;
+
+// Prime factors service definition.
+service SentenceIntent {
+  rpc Analyze (Request) returns (Response) {}
+}
+
+message Request {
+  string sentence = 1;
+}
+
+message Intent {
+  float request = 1;
+  float threat = 2;
+  float opinion = 3;
+}
+
+message Response {
+  Intent intent = 1;
+  float exec_time = 2;
+}

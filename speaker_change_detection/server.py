@@ -6,11 +6,11 @@ import random
 import tensorflow as tf
 from keras import backend as K
 
-from utils import load_model
-from detect import detect
+from .utils import load_model
+from .detect import detect
 
-import speaker_change_detection_pb2
-import speaker_change_detection_pb2_grpc
+from speaker_change_detection import speaker_change_detection_pb2
+from speaker_change_detection import speaker_change_detection_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 _PORT = 50054

@@ -25,7 +25,7 @@ def run():
     stub = speaker_change_detection_pb2_grpc.SpeakerChangeDetectionStub(channel)
 
     # Reading file (test purposes)
-    (signal, sampleRate) = librosa.load("./sample_3.wav", sr=44100)
+    (signal, sampleRate) = librosa.load("./sample_3.wav")
     it = stub.Analyze(gen(signal, 1024, sampleRate))
     try:
         for r in it:

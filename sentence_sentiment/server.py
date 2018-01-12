@@ -3,14 +3,15 @@ import grpc
 import time
 import os
 
-import sentence_sentiment_pb2
-import sentence_sentiment_pb2_grpc
+from sentence_sentiment import sentence_sentiment_pb2
+from sentence_sentiment import sentence_sentiment_pb2_grpc
 
 import numpy as np
 import nltk
 from keras import backend as K
 import tensorflow as tf
-from utils import word2vec, load_model
+
+from .utils import word2vec, load_model
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 _PORT = 50051
@@ -26,7 +27,7 @@ W2V, model = load_model()
 
 class SentenceSentiment(sentence_sentiment_pb2_grpc.SentenceSentimentServicer):
     def __init__(self):
-        self.MAX_LENGTH = 66
+        self.MAX_LENGTH = 300
         self.TOP_WORDS = 40000
 
     def Analyze(self, request, context):

@@ -3,14 +3,14 @@ import grpc
 import time
 import os
 
-import speaker_emotion_pb2
-import speaker_emotion_pb2_grpc
+from speaker_emotion import speaker_emotion_pb2
+from speaker_emotion import speaker_emotion_pb2_grpc
 
 import numpy as np
 import librosa
 from keras import backend as K
 import tensorflow as tf
-from utils import load_model
+from .utils import load_model
 import configparser
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -28,7 +28,7 @@ class SpeakerEmotion(speaker_emotion_pb2_grpc.SpeakerEmotionServicer):
         # Setting parameters
 
         cfg = configparser.ConfigParser()
-        cfg.read('config.cfg')
+        cfg.read(os.path.join(os.path.dirname(__file__), 'config.cfg'))
 
         self.FRAME_LENGTH = int(cfg.get("MEL", "frame_length"))
         self.FRAME_HOP = int(cfg.get("MEL", "frame_hop"))

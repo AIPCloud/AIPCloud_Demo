@@ -17,10 +17,10 @@ import librosa
 from sklearn import mixture
 #import matplotlib.mlab as mlab
 from scipy.stats import norm
-from signal_proc import ShortTermEnergy, SpectralCentroids
+from .signal_proc import ShortTermEnergy, SpectralCentroids
 
 cfg = configparser.ConfigParser()
-cfg.read('config.cfg')
+cfg.read(os.path.join(os.path.dirname(__file__), './config.cfg'))
 
 # We load all the parameters
 PARAM_HAMMING_LENGTH = int(cfg.get("FEATURE", "win_length"))
@@ -61,8 +61,8 @@ def riemannSum(f, I):
 def detect(signal, samplerate, framing=True, frame_length=FRAME_LENGTH, frame_hop=FRAME_HOP, model=False):
 	changes = [] # Will contain all the changes
 	#Resample
-	signal = librosa.resample(np.asarray(signal), samplerate, 22050)
-	samplerate = 22050
+	# signal = librosa.resample(np.asarray(signal), samplerate, 22050)
+	# samplerate = 22050
 	# We NEED to perform analysis on mono signals
 	signal = librosa.to_mono(np.transpose(signal))
 
@@ -249,7 +249,7 @@ def detect(signal, samplerate, framing=True, frame_length=FRAME_LENGTH, frame_ho
 	return changes
 
 if __name__ == '__main__':
-	signal, samplerate = librosa.load("sample_multi.wav")
+	signal, samplerate = librosa.load("sample_1.wav", sr=44100)
 	detections = detect(signal, samplerate)
 	print(detections)
 

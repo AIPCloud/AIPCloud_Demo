@@ -3,17 +3,18 @@ import grpc
 import time
 import os
 
-import sentence_sentiment_pb2
-import sentence_sentiment_pb2_grpc
+from sentence_intent import sentence_intent_pb2
+from sentence_intent import sentence_intent_pb2_grpc
 
 import numpy as np
 import nltk
 from keras import backend as K
 import tensorflow as tf
-from utils import word2vec, load_model
+
+from .utils import word2vec, load_model
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-_PORT = 50051
+_PORT = 50055
 
 W2V = None
 model = None
@@ -24,18 +25,16 @@ K.set_session(sess)  # K is keras backend
 W2V, model = load_model()
 
 
-class SentenceSentiment(sentence_sentiment_pb2_grpc.SentenceSentimentServicer):
+class SentenceIntent(sentence_intent_pb2_grpc.SentenceIntentServicer):
     def __init__(self):
-        self.MAX_LENGTH = 66
+        self.MAX_LENGTH = 24
         self.TOP_WORDS = 40000
 
     def Analyze(self, request, context):
         global W2V, model, sess
         execTime = time.time()
 
-        text = request.sentence
-        text = text.lower()
-        print(text)
+        text = request.sentence.lower()
         # We transform our sentence into word tokens
         tokens = nltk.word_tokenize(text)
 
@@ -48,24 +47,25 @@ class SentenceSentiment(sentence_sentiment_pb2_grpc.SentenceSentimentServicer):
                 # If the word index was in the vocabulary during training phase
                 if indexVal < self.TOP_WORDS:
                     vector[i] = indexVal
+
         with sess.graph.as_default():
-            predict = model.predict(np.asarray([vector]))
+            predict = model.predict(np.asarray([vector]))[0]
         execTime = time.time() - execTime
-        return sentence_sentiment_pb2.Response(
-            sentiment=sentence_sentiment_pb2.Sentiment(
-                positivity=predict[0][2],
-                neutrality=predict[0][1],
-                negativity=predict[0][0]),
+        return sentence_intent_pb2.Response(
+            intent=sentence_intent_pb2.Intent(
+                request=predict[0],
+                threat=predict[1],
+                opinion=predict[2]),
             exec_time=execTime)
 
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    sentence_sentiment_pb2_grpc.add_SentenceSentimentServicer_to_server(
-        SentenceSentiment(), server)
+    sentence_intent_pb2_grpc.add_SentenceIntentServicer_to_server(
+        SentenceIntent(), server)
     server.add_insecure_port('[::]:{}'.format(_PORT))
     server.start()
-    print("Starting SentenceSentiment Server on port {}...".format(_PORT))
+    print("Starting SentenceIntent Server on port {}...".format(_PORT))
     try:
         while True:
             time.sleep(_ONE_DAY_IN_SECONDS)
