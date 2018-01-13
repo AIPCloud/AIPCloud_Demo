@@ -32,14 +32,12 @@ class SpeakerChangeDetection(speaker_change_detection_pb2_grpc.SpeakerChangeDete
                 raise Exception("Sample rate changed during streaming.")
             sampleRate = req.sample_rate
             signalChunk += req.signal
-            if len(signalChunk) > 3 * sampleRate:
+            if len(signalChunk) > 5 * sampleRate:
                 with self.graph.as_default():
                     execTime = time.time()
                     t_0 = len(Signal) / sampleRate
                     changes = detect(signalChunk, sampleRate, model=self.model)
-                    changes = [9]
-                    if len(Signal) > 5 * sampleRate:
-                        changes = []
+                    changes = [4]
                 for change in changes:
                     change += t_0
                     yield speaker_change_detection_pb2.Response(change=speaker_change_detection_pb2.Change(time=change), exec_time=time.time() - execTime)

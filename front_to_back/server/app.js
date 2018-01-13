@@ -42,16 +42,19 @@ nsp.on('connect', function(socket){
     console.log("Change in speaker detected.")
     console.log(resSCD.change.time)
     // Client definition
-    a = S2Tclient.recognition()
-    S2Tcall = a.call
-    S2Tres = a.res
-    a = SEclient.analyze()
-    SEcall = a.call
-    SEres = a.res
+    var a = S2Tclient.recognition()
+    var S2Tcall = a.call
+    var S2Tres = a.res
+    var b = SEclient.analyze()
+    var SEcall = b.call
+    var SEres = b.res
 
     console.log("Starting the chunk streaming.");
     var newStep = Math.round(resSCD.change.time * sampleRate)
+    console.log(lastStep);
+    console.log(newStep);
     var signal = Signal.slice(lastStep, newStep)
+    console.log("signal: ", signal.length);
 
     while (signal.length > 0) {
       chunkSize = 1024
@@ -61,30 +64,27 @@ nsp.on('connect', function(socket){
       chunk = signal.splice(0, chunkSize)
       data = {
         signal: chunk,
-        sample_rate: sampleRate,
+        sample_rate: 44100,
       }
       SEcall.write({
         signal: chunk,
-        sample_rate: sampleRate,
+        sample_rate: 44100,
       })
       S2Tcall.write({
         signal: chunk,
-        sample_rate: sampleRate,
+        sample_rate: 44100,
         language_code: 'fr-FR'
       })
     }
     SEcall.end()
     S2Tcall.end()
-    lastStep = newStep
+    console.log(Signal.length);
 
-    //
-    //
-    // S2Tres.then(function(res){
-    //   console.log("S2T: ", res);
-    // })
-    // SEres.then(function(res){
-    //   console.log("SE: ", res);
-    // })
+    var range = {
+      start: lastStep,
+      stop: newStep
+    }
+    lastStep = newStep
 
     Promise.all([S2Tres, SEres]).then(function(results){
       S2T_res = results[0]
@@ -109,11 +109,11 @@ nsp.on('connect', function(socket){
         }
         var response_data = {
           emotions: SE_res.emotions,
-          speeches: S2T_res.speeches
+          speeches: S2T_res.speeches,
+          range: range
         }
-        console.log(response_data);
+        socket.emit('analysis_response', response_data)
       })
-
     })
   })
   socket.on('audio_buffer', function(data){
