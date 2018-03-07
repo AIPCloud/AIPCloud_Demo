@@ -1,16 +1,12 @@
 import grpc
 
-import sentence_intent_pb2
-import sentence_intent_pb2_grpc
+from sentence_intent import sentence_intent_pb2
+from sentence_intent import sentence_intent_pb2_grpc
 
-_SENTENCE_SENTIMENT_PORT = 50055
+_SENTENCE_INTENT_PORT = 50051
 
-def run():
-    channel = grpc.insecure_channel('localhost:{}'.format(_SENTENCE_SENTIMENT_PORT))
+def run(sentence):
+    channel = grpc.insecure_channel('localhost:{}'.format(_SENTENCE_INTENT_PORT))
     stub = sentence_intent_pb2_grpc.SentenceIntentStub(channel)
-    res = stub.Analyze(sentence_intent_pb2.Request(sentence="Rendez-moi mon paravent tout de suite!"))
-    print(res)
-
-
-if __name__ == "__main__":
-    run()
+    res = stub.Analyze(sentence_intent_pb2.Request(sentence=sentence))
+    return res

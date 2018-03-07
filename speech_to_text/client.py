@@ -5,7 +5,7 @@ import speech_to_text_pb2_grpc
 
 import soundfile as sf
 
-_SPEECH_TO_TEXT_PORT = 50053
+_SPEECH_TO_TEXT_PORT = 50055
 
 def run():
     channel = grpc.insecure_channel('localhost:{}'.format(_SPEECH_TO_TEXT_PORT))

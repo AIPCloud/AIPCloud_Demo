@@ -32,7 +32,6 @@ class SentenceIntent(sentence_intent_pb2_grpc.SentenceIntentServicer):
         execTime = time.time()
 
         text = request.sentence.lower()
-        print(text)
         # We transform our sentence into word tokens
         tokens = nltk.word_tokenize(text)
 
